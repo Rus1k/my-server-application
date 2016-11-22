@@ -1,8 +1,6 @@
 package com.rasulov.web.servlets;
 
 import com.rasulov.entity.User;
-import com.rasulov.repository.dao.UserDao;
-import com.rasulov.repository.dao.UserDaoImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,23 +9,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SaveInfoServlet extends HttpServlet {
-    UserDao userDao = new UserDaoImpl();
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String lastName = req.getParameter("lastName");
-        String email = req.getParameter("email");
-        int age = req.getIntHeader("age");
-        String hobby = req.getParameter("hobby");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/json");
+        User user = new User();
+        user.setName(request.getParameter("name"));
+        user.setLastName(request.getParameter("lastName"));
+        user.setEmail(request.getParameter("email"));
+        user.setAge(Integer.parseInt(request.getParameter("age")));
+        user.setHobby(request.getParameter("hobby"));
+        System.out.println(user.toString());
+    }
 
-        userDao.save(User.builder()
-                .name(name)
-                .lastName(lastName)
-                .email(email)
-                .age(age)
-                .hobby(hobby)
-                .build());
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 }

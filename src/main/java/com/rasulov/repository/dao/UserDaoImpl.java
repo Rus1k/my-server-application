@@ -3,13 +3,18 @@ package com.rasulov.repository.dao;
 import com.rasulov.entity.User;
 import com.rasulov.repository.Connect;
 
-
 import java.sql.*;
 
 public class UserDaoImpl implements UserDao {
 
     public static final String INSERT_USER = "INSERT INTO users(name, last_name, email, age, hobby) VALUES (?,?,?,?,?)";
+    public static final String SELECT_USER = "SELECT id, name, last_name, email, age, hobby FROM users WHERE email = ?";
+    public static final String DELETE_USER = "DELETE FROM users WHERE email = ?";
+    public static final String CHECK_EMAIL = "SELECT email FROM users WHERE email =?";
+    public static final String UPDATE_USER = "UPDATE users SET name = ?, last_name = ?, email = ?,age = ?, hobby = ? " +
+            "WHERE email = ?";
 
+    String returnText;
 
     PreparedStatement preparedStatement = null;
     Connection connection = Connect.getConnect();
@@ -34,17 +39,76 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void delete(User user) {
+    public String delete(User user) {
+
+        try {
+            preparedStatement = connection.prepareStatement(DELETE_USER);
+            preparedStatement.setString(1, user.getEmail());
+            int i = preparedStatement.executeUpdate();
+            if (i == 0) {
+                returnText = "not delete";
+            } else returnText = "deleted";
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return returnText;
 
     }
 
     @Override
     public String update(User user) {
-        return null;
+        try {
+            preparedStatement = connection.prepareStatement(UPDATE_USER);
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setInt(4, user.getAge());
+            preparedStatement.setString(5, user.getHobby());
+            int i = preparedStatement.executeUpdate();
+            if (i == 0) {
+                returnText = "no changes";
+            } else returnText = "changes successfully";
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return returnText;
     }
+
 
     @Override
     public boolean checkUser(String email) {
+        try {
+            preparedStatement = connection.prepareStatement(CHECK_EMAIL);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet!= null){
+                return true;
+            }else return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
+    }
+
+    @Override
+    public User getUserFromEmail(String email) {
+        User user = null;
+        try {
+            preparedStatement = connection.prepareStatement(SELECT_USER);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            user = User.builder()
+                    .id(resultSet.getInt("id"))
+                    .name(resultSet.getString("name"))
+                    .lastName(resultSet.getString("last_name"))
+                    .email(email)
+                    .age(resultSet.getInt("age"))
+                    .hobby(resultSet.getString("hobby"))
+                    .build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return user;
     }
 }

@@ -7,8 +7,9 @@ public interface UserDao {
 
 
     void save(User user);
-    void delete(User user);
+    String delete(User user);
     String update(User user);
     boolean checkUser(String email);
+    User getUserFromEmail(String email);
 
 }

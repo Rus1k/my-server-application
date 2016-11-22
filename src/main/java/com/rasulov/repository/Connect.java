@@ -44,7 +44,7 @@ public class Connect {
         System.out.println("table create successfully");
     }
 
-    public static void CloseDB() throws ClassNotFoundException, SQLException
+    public static void closeDB() throws ClassNotFoundException, SQLException
     {
         connection.close();
         statement.close();
