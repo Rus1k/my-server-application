@@ -1,9 +1,13 @@
 package com.rasulov.repository.dao;
 
 import com.rasulov.entity.User;
-import com.rasulov.repository.Connect;
+import com.rasulov.repository.SQLiteConnection;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+
 
 public class UserDaoImpl implements UserDao {
 
@@ -17,14 +21,11 @@ public class UserDaoImpl implements UserDao {
     String returnText;
 
     PreparedStatement preparedStatement = null;
-    Connection connection = Connect.getConnect();
-
 
     @Override
     public void save(User user) {
-
         try {
-            preparedStatement = connection.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = SQLiteConnection.db.connection.prepareStatement(INSERT_USER);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
@@ -42,7 +43,7 @@ public class UserDaoImpl implements UserDao {
     public String delete(User user) {
 
         try {
-            preparedStatement = connection.prepareStatement(DELETE_USER);
+            preparedStatement = SQLiteConnection.db.connection.prepareStatement(DELETE_USER);
             preparedStatement.setString(1, user.getEmail());
             int i = preparedStatement.executeUpdate();
             if (i == 0) {
@@ -58,7 +59,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public String update(User user) {
         try {
-            preparedStatement = connection.prepareStatement(UPDATE_USER);
+            preparedStatement = SQLiteConnection.db.connection.prepareStatement(UPDATE_USER);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
@@ -78,7 +79,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean checkUser(String email) {
         try {
-            preparedStatement = connection.prepareStatement(CHECK_EMAIL);
+            preparedStatement = SQLiteConnection.db.connection.prepareStatement(CHECK_EMAIL);
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet!= null){
@@ -94,7 +95,7 @@ public class UserDaoImpl implements UserDao {
     public User getUserFromEmail(String email) {
         User user = null;
         try {
-            preparedStatement = connection.prepareStatement(SELECT_USER);
+            preparedStatement = SQLiteConnection.db.connection.prepareStatement(SELECT_USER);
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             user = User.builder()

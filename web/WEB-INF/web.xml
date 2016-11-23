@@ -6,12 +6,12 @@
            version="3.0">
 
     <servlet>
-        <servlet-name>SaveServlet</servlet-name>
-        <servlet-class>com.rasulov.web.servlets.SaveInfoServlet</servlet-class>
+        <servlet-name>UserServlet</servlet-name>
+        <servlet-class>com.rasulov.web.servlets.UserServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>SaveServlet</servlet-name>
-        <url-pattern>/saveservlet</url-pattern>
+        <servlet-name>UserServlet</servlet-name>
+        <url-pattern>/user</url-pattern>
     </servlet-mapping>
 
 </web-app>
