@@ -1,5 +1,7 @@
 package com.rasulov.validator;
 
+import com.rasulov.exception.InvalidEmailException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,12 +18,12 @@ public class EmailValidator {
         pattern = Pattern.compile(EMAIL_PATTERN);
     }
 
-    public String validate(final String hex) {
+    public void validate(final String email) {
 
-        matcher = pattern.matcher(hex);
-        if (matcher.matches()) {
-            return "norm";
-        } else return "fall";
+        matcher = pattern.matcher(email);
+        if (!matcher.matches()) {
+            new InvalidEmailException();
+        }
 
     }
 }

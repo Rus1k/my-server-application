@@ -3,8 +3,7 @@ package com.rasulov.web.servlets;
 import com.rasulov.entity.User;
 import com.rasulov.repository.dao.UserDao;
 import com.rasulov.repository.dao.UserDaoImpl;
-import lombok.extern.slf4j.Slf4j;
-
+import lombok.extern.java.Log;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -13,9 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Log
 public class UserServlet extends HttpServlet {
 
-    UserDao userDao = new UserDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -32,7 +32,8 @@ public class UserServlet extends HttpServlet {
         user.setEmail(request.getParameter("email"));
         user.setAge(age);
         user.setHobby(request.getParameter("hobby"));
-        System.out.println(user.toString());
+
+        log.info(user.toString());
 
         userDao.save(user);
     }
@@ -41,7 +42,7 @@ public class UserServlet extends HttpServlet {
         JSONObject json = new JSONObject();
         String email= request.getParameter("email");
 
-        System.out.println(email);
+        log.info("Search by email: +" + email);
 
         User user = userDao.getUserFromEmail(email);
         json.put("name", user.getName());
@@ -50,7 +51,7 @@ public class UserServlet extends HttpServlet {
         json.put("age", user.getAge());
         json.put("hobby", user.getHobby());
 
-        System.out.println(user.toString());
+        log.info("Response from server: "+user.toString());
 
         response.setContentType("application/json");
         response.getWriter().write(json.toString());

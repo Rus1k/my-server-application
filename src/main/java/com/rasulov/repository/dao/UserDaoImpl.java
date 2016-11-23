@@ -1,14 +1,17 @@
 package com.rasulov.repository.dao;
 
 import com.rasulov.entity.User;
+import com.rasulov.exception.UserDeleteException;
+import com.rasulov.exception.UserUpdateException;
 import com.rasulov.repository.SQLiteConnection;
+import lombok.extern.java.Log;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-
+@Log
 public class UserDaoImpl implements UserDao {
 
     public static final String INSERT_USER = "INSERT INTO users(name, last_name, email, age, hobby) VALUES (?,?,?,?,?)";
@@ -18,14 +21,13 @@ public class UserDaoImpl implements UserDao {
     public static final String UPDATE_USER = "UPDATE users SET name = ?, last_name = ?, email = ?,age = ?, hobby = ? " +
             "WHERE email = ?";
 
-    String returnText;
-
     PreparedStatement preparedStatement = null;
 
     @Override
     public void save(User user) {
+        log.info("Save user: " + user.toString());
         try {
-            preparedStatement = SQLiteConnection.db.connection.prepareStatement(INSERT_USER);
+            preparedStatement = SQLiteConnection.getConnection().prepareStatement(INSERT_USER);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
@@ -34,32 +36,34 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.info(e.toString());
         }
 
     }
 
     @Override
-    public String delete(User user) {
+    public void delete(User user) {
+        log.info("Delete user: " + user.toString());
 
         try {
-            preparedStatement = SQLiteConnection.db.connection.prepareStatement(DELETE_USER);
+            preparedStatement = SQLiteConnection.getConnection().prepareStatement(DELETE_USER);
             preparedStatement.setString(1, user.getEmail());
             int i = preparedStatement.executeUpdate();
             if (i == 0) {
-                returnText = "not delete";
-            } else returnText = "deleted";
+                new UserDeleteException();
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.info(e.toString());
         }
-        return returnText;
 
     }
 
     @Override
-    public String update(User user) {
+    public void update(User user) {
+        log.info("update user: " + user.toString());
+
         try {
-            preparedStatement = SQLiteConnection.db.connection.prepareStatement(UPDATE_USER);
+            preparedStatement = SQLiteConnection.getConnection().prepareStatement(UPDATE_USER);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
@@ -67,35 +71,39 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.setString(5, user.getHobby());
             int i = preparedStatement.executeUpdate();
             if (i == 0) {
-                returnText = "no changes";
-            } else returnText = "changes successfully";
+                new UserUpdateException();
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.info(e.toString());
+
         }
-        return returnText;
     }
 
 
     @Override
     public boolean checkUser(String email) {
+        log.info("Check user by email: " + email);
+
         try {
-            preparedStatement = SQLiteConnection.db.connection.prepareStatement(CHECK_EMAIL);
+            preparedStatement = SQLiteConnection.getConnection().prepareStatement(CHECK_EMAIL);
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet!= null){
+            if (resultSet != null) {
                 return true;
-            }else return false;
+            } else return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.info(e.toString());
         }
         return false;
     }
 
     @Override
     public User getUserFromEmail(String email) {
+        log.info("Get user from email: " + email);
+
         User user = null;
         try {
-            preparedStatement = SQLiteConnection.db.connection.prepareStatement(SELECT_USER);
+            preparedStatement = SQLiteConnection.getConnection().prepareStatement(SELECT_USER);
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             user = User.builder()
@@ -107,7 +115,7 @@ public class UserDaoImpl implements UserDao {
                     .hobby(resultSet.getString("hobby"))
                     .build();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.info(e.toString());
         }
 
         return user;

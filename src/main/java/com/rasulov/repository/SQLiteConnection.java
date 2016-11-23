@@ -1,16 +1,18 @@
 package com.rasulov.repository;
 
 
+import lombok.extern.java.Log;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
+@Log
 public final class SQLiteConnection {
 
-    public Connection connection;
-    public static Statement statement;
+    private static Statement statement;
+    private static Connection connection;
     public static SQLiteConnection db = new SQLiteConnection();
 
     private SQLiteConnection() {
@@ -26,10 +28,14 @@ public final class SQLiteConnection {
         }
     }
 
+    public static Connection getConnection() {
+        return connection;
+    }
+
     public static void createTable(){
         try {
             statement = db.connection .createStatement();
-            statement.execute("CREATE TABLE [users] (" +
+            statement.execute("CREATE TABLE IF NOT EXISTS [users] (" +
                     "[id] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     "[name] VARCHAR(60)  NOT NULL, " +
                     "[last_name] VARCHAR(60)  NOT NULL, " +
@@ -39,7 +45,7 @@ public final class SQLiteConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("table create successfully");
+        log.info("table create successfully");
     }
 
     public static void closeDB(Connection connection){
@@ -49,6 +55,6 @@ public final class SQLiteConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("close connect");
+        log.info("close connect");
     }
 }
