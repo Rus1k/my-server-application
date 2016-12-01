@@ -1,9 +1,9 @@
-package com.rasulov.repository.dao;
+package com.rasulov.repository.query;
 
 
 import com.rasulov.entity.User;
 
-public interface UserDao {
+public interface DBService {
 
 
     void save(User user);
@@ -11,6 +11,5 @@ public interface UserDao {
     void update(User user);
     boolean checkUser(String email);
     User getUserByEmail(String email);
-
 
 }
