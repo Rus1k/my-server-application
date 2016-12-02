@@ -12,7 +12,7 @@ public class CreateTable {
 
     public static void createTable() {
         try {
-            Connection connection = SQLiteConnection.getConnection();
+            Connection connection = SQLiteConnection.connection;
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS [users] (" +
                     "[id] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     "[name] VARCHAR(60)  NOT NULL, " +

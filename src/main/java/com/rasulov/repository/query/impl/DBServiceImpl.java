@@ -23,8 +23,7 @@ public class DBServiceImpl implements DBService {
     public static final String CHECK_EMAIL = "SELECT email FROM users WHERE email =?";
     public static final String UPDATE_USER = "UPDATE users SET name = ?, last_name = ?, email = ?,age = ?, hobby = ?" +
             " WHERE EXISTS (SELECT id FROM users WHERE email = ?)";
-    private Connection connection = SQLiteConnection.getConnection();
-
+    private Connection connection = SQLiteConnection.connection;
 
     @Override
     public void save(User user) {
